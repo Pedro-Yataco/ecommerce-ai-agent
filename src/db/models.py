@@ -65,7 +65,9 @@ class Order(Base):
         index=True,
     )
     order_status: Mapped[str | None] = mapped_column(String(32), nullable=True)
-    order_purchase_timestamp: Mapped[datetime | None] = mapped_column(DateTime, nullable=True, index=True)
+    order_purchase_timestamp: Mapped[datetime | None] = mapped_column(
+        DateTime, nullable=True, index=True
+    )
     order_approved_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
     order_delivered_carrier_date: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
     order_delivered_customer_date: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)

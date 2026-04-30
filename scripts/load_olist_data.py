@@ -262,8 +262,7 @@ def _iter_csv_rows(file_path: Path, parse_row: RowParser) -> Iterable[DbRow]:
 
         for row in reader:
             normalized_row = {
-                key.strip() if key is not None else key: value
-                for key, value in row.items()
+                key.strip() if key is not None else key: value for key, value in row.items()
             }
             yield parse_row(normalized_row)
 
@@ -277,9 +276,7 @@ def _validate_required_files(data_dir: Path) -> None:
 
     if missing_files:
         missing = ", ".join(missing_files)
-        raise FileNotFoundError(
-            f"Missing required Olist CSV files in {data_dir}: {missing}"
-        )
+        raise FileNotFoundError(f"Missing required Olist CSV files in {data_dir}: {missing}")
 
 
 async def _truncate_tables(connection: asyncpg.Connection) -> None:
