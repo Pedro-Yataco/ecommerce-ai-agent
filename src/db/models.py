@@ -132,12 +132,10 @@ class OrderReview(Base):
 
     __tablename__ = "order_reviews"
 
-    review_id: Mapped[str] = mapped_column(String(64), primary_key=True)
+    review_id: Mapped[str] = mapped_column(String, primary_key=True)
     order_id: Mapped[str] = mapped_column(
-        String(64),
         ForeignKey("orders.order_id"),
-        nullable=False,
-        index=True,
+        primary_key=True,
     )
     review_score: Mapped[int | None] = mapped_column(Integer, nullable=True)
     review_comment_title: Mapped[str | None] = mapped_column(Text, nullable=True)
