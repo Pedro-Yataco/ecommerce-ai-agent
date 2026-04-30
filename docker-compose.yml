@@ -4,15 +4,15 @@ services:
     container_name: ecommerce_postgres
     restart: unless-stopped
     environment:
-      POSTGRES_DB: ecommerce_ai_agent
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d ecommerce_ai_agent"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -27,13 +27,12 @@ services:
       - ollama_data:/root/.ollama
 
   api:
-    image: python:3.11-slim
+    build:
+      context: .
+      dockerfile: Dockerfile
     container_name: ecommerce_api
     working_dir: /app
-    command: >
-      sh -c "pip install --upgrade pip &&
-             pip install -e . &&
-             uvicorn src.api.main:app --host 0.0.0.0 --port 8000 --reload"
+    command: uvicorn src.api.main:app --host 0.0.0.0 --port 8000 --reload
     volumes:
       - .:/app
     env_file:
@@ -47,13 +46,12 @@ services:
         condition: service_started
 
   streamlit:
-    image: python:3.11-slim
+    build:
+      context: .
+      dockerfile: Dockerfile
     container_name: ecommerce_streamlit
     working_dir: /app
-    command: >
-      sh -c "pip install --upgrade pip &&
-             pip install -e . &&
-             streamlit run src/ui/app.py --server.address 0.0.0.0 --server.port 8501"
+    command: streamlit run src/ui/app.py --server.address 0.0.0.0 --server.port 8501
     volumes:
       - .:/app
     env_file:
