@@ -1,0 +1,42 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  pull_request:
+    branches:
+      - main
+      - master
+
+jobs:
+  lint-and-test:
+    name: Lint and test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Create environment file
+        run: cp .env.example .env
+
+      - name: Build services
+        run: docker compose build
+
+      - name: Run database migrations
+        run: docker compose run --rm api alembic upgrade head
+
+      - name: Run lint
+        run: docker compose run --rm api ruff check .
+
+      - name: Run format check
+        run: docker compose run --rm api black --check .
+
+      - name: Run tests
+        run: docker compose run --rm api pytest
+
+      - name: Stop services
+        if: always()
+        run: docker compose down -v
